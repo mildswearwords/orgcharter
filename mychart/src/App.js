@@ -23,27 +23,16 @@ function App() {
     </div>
   );
 }
-function OrgChart(){
-	const svgRef = useRef();
-	useEffect((() => {
-		const svg = select(svgRef.current)
-			.append('svg')
-			.attr('width', 500)
-			.attr('height', 500);
-	}, []));
-	return (
-		<div ref = {svgRef}></div>
-	);
-}
 function orgTable() {
 	const [rows, setRows] = useState([
-		{id:1, name:'John Doe', title:'CEO', manager:''},
+		{id:1, name:'John Doe', title:'CEO', manager:'Jane Doe'}, 
 		{id:2, name:'Jane Doe', title:'Chair', manager:''}
 	]);
-	const getUniqueNames = (rows) => {
+	const getUniqueNames = () => {
 		const names = rows.map(row => row.name);
 		return [...new Set(names)];
 	}
+	const [uniqueNames, setUniqueNames] = useState(getUniqueNames(rows));
 	const handleChange = (event, id) => {
 		const updatedRows = rows.map(row => {
 			if (row.id == id){
@@ -52,6 +41,8 @@ function orgTable() {
 			return row;
 		});
 		setRows(updatedRows);
+		setUniqueNames(getUniqueNames());
+
 	}
 	return (
 		<table>
@@ -81,8 +72,28 @@ function orgTable() {
 								onChange = {event => handleChange(event, row.id)}
 							/>
 						</td>
+						<td>
+							<select
+								name = "manager"
+								value = {row.manager}
+								onChange = {event => handleChange(event, row.id)}
+							>
+							{uniqueNames.map(name => (
+								<option key = {name} value = {name}>{name}</option>
+							))}
+								
+							</select>
+						</td>
 					</tr>
 				))}
+					<tr>
+						<button 
+							name = "addRow"
+							onClick = {() => setRows([...rows, {id:rows.length+1, name:'', title:'', manager:''}])}
+						>
+							Add Row
+						</button>
+					</tr>
 			</tbody>
 		</table>
 	);}
@@ -91,5 +102,4 @@ function orgTable() {
 
 
 
-export default OrgTable;
-export {OrgChart};
+export default orgTable;
