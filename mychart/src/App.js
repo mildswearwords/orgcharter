@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react';
+import {select} from 'd3';
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function OrgChart(){
 		<div ref = {svgRef}></div>
 	);
 }
-function orgTable(){
+function orgTable() {
 	const [rows, setRows] = useState([
 		{id:1, name:'John Doe', title:'CEO', manager:''},
 		{id:2, name:'Jane Doe', title:'Chair', manager:''}
@@ -90,4 +91,5 @@ function orgTable(){
 
 
 
-export default App;
+export default OrgTable;
+export {OrgChart};
