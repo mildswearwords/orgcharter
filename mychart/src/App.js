@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React, {useState, useEffect, useRef} from 'react';
-import {select} from 'd3';
+import {select, hierarchy, tree} from 'd3';
 
 function App() {
   return (
@@ -23,10 +23,13 @@ function App() {
     </div>
   );
 }
+
 function orgTable() {
 	const [rows, setRows] = useState([
-		{id:1, name:'John Doe', title:'CEO', manager:'Jane Doe'}, 
-		{id:2, name:'Jane Doe', title:'Chair', manager:''}
+		{id:1, name:'John Doe', title:'CEO'}, 
+		{id:2, name:'Jane Doe', title:'Chair', manager:1},
+		{id:3, name:'James Doe', title: 'Manager', manager:2},
+		{id:4, name:'Arthur Doe', title: 'Manager', manager:2}
 	]);
 	const getUniqueNames = () => {
 		const names = rows.map(row => row.name);
@@ -86,20 +89,56 @@ function orgTable() {
 						</td>
 					</tr>
 				))}
-					<tr>
+			</tbody>	
+		
 						<button 
 							name = "addRow"
 							onClick = {() => setRows([...rows, {id:rows.length+1, name:'', title:'', manager:''}])}
 						>
 							Add Row
 						</button>
-					</tr>
-			</tbody>
+			<div>
+				<DrawOrgChart data = {rows} />
+			</div>
 		</table>
 	);}
 	
 								
 
 
-
+function DrawOrgChart(props){ 
+	const root = {name: 'Root Node', children:[], value:1};
+	const nodes = {};
+	props.data.forEach(item => {
+		const node = {name: item.name, value:1};
+		nodes[item.id] = node;
+		if (item.manager == null){
+			root.children.push(node);
+		}
+		else {
+			const parentNode = nodes[item.manager];
+			if(parentNode.children == null){
+				parentNode.children = [];
+			}
+			parentNode.children.push(node);
+		}
+	});
+	console.log(root);
+	const treeRoot = hierarchy(root);
+	const container = select('#org-chart');
+	const svg = container.append('svg')
+		.attr('width', 1000)
+		.attr('height', 1000);
+	const treeLayout = tree().size([250,250]);
+	treeLayout(treeRoot);
+	svg.selectAll('.node')
+		.data(treeRoot.descendants())
+		.enter()
+		.append('circle')
+		.attr('cx', d=>d.x)
+		.attr('cy', d=>d.y)
+		.attr('r', 5)
+		.attr('fill', 'black');
+}
 export default orgTable;
+export {DrawOrgChart};

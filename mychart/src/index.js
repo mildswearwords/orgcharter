@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import OrgChart from './App';
+import DrawOrgChart from './App';
 import OrgTable from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -10,6 +10,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
 	<OrgTable />
+	<div id='org-chart'></div>
   </React.StrictMode>
 );
 class ShoppingList extends React.Component {
